@@ -79,7 +79,7 @@ def analyze_and_relax(cif_string, device):
 @st.cache_resource
 def load_backend():
     device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-    ckpt_path = "/Users/anvitha/Desktop/battery/generation_model/ckpt.pt"
+    ckpt_path = "ckpt.pt"
 
     if not os.path.exists(ckpt_path):
         return None, None, device, f"Checkpoint not found at: {ckpt_path}"
