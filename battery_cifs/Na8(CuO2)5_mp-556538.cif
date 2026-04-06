@@ -1,0 +1,49 @@
+# generated using pymatgen
+data_Na8(CuO2)5
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   5.64505259
+_cell_length_b   8.06993013
+_cell_length_c   8.06993076
+_cell_angle_alpha   119.05293318
+_cell_angle_beta   100.86537690
+_cell_angle_gamma   100.86536870
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   Na8(CuO2)5
+_chemical_formula_sum   'Na8 Cu5 O10'
+_cell_volume   298.34451753
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Na  Na0  1  0.39926045  0.26584670  0.54097430  1
+  Na  Na1  1  0.36366318  0.73536331  0.95645148  1
+  Na  Na2  1  0.08975942  0.51900508  0.51900508  1
+  Na  Na3  1  0.14414722  0.85765387  0.29714225  1
+  Na  Na4  1  0.39926045  0.54097430  0.26584670  1
+  Na  Na5  1  0.36366318  0.95645148  0.73536331  1
+  Na  Na6  1  0.14414722  0.29714225  0.85765387  1
+  Na  Na7  1  0.14849830  0.09023204  0.09023204  1
+  Cu  Cu8  1  0.75128010  0.01930728  0.41743655  1
+  Cu  Cu9  1  0.78047072  0.62829614  0.82738397  1
+  Cu  Cu10  1  0.78047072  0.82738397  0.62829614  1
+  Cu  Cu11  1  0.72120982  0.19565841  0.19565841  1
+  Cu  Cu12  1  0.75128010  0.41743655  0.01930728  1
+  O  O13  1  0.52834013  0.47921503  0.87946284  1
+  O  O14  1  0.52564220  0.65403722  0.65403722  1
+  O  O15  1  0.97929149  0.15646193  0.35451626  1
+  O  O16  1  0.97929149  0.35451626  0.15646193  1
+  O  O17  1  0.00655374  0.57042487  0.98856531  1
+  O  O18  1  0.52834013  0.87946284  0.47921503  1
+  O  O19  1  0.03217230  0.78402686  0.78402686  1
+  O  O20  1  0.49094994  0.04599396  0.26073737  1
+  O  O21  1  0.00655374  0.98856531  0.57042487  1
+  O  O22  1  0.49094994  0.26073737  0.04599396  1

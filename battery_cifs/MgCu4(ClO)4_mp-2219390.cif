@@ -1,0 +1,39 @@
+# generated using pymatgen
+data_MgCu4(ClO)4
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   5.29814655
+_cell_length_b   6.56833712
+_cell_length_c   6.54617120
+_cell_angle_alpha   89.04053290
+_cell_angle_beta   90.19239605
+_cell_angle_gamma   114.64119789
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   MgCu4(ClO)4
+_chemical_formula_sum   'Mg1 Cu4 Cl4 O4'
+_cell_volume   207.03128657
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mg  Mg0  1  0.96855700  0.36614900  0.24573800  1
+  Cu  Cu1  1  0.25203800  0.05430500  0.60083200  1
+  Cu  Cu2  1  0.24512800  0.00660600  0.10070900  1
+  Cu  Cu3  1  0.73792700  0.92438000  0.38939600  1
+  Cu  Cu4  1  0.75283500  0.02741700  0.87793300  1
+  Cl  Cl5  1  0.18202400  0.32772500  0.92559500  1
+  Cl  Cl6  1  0.31428200  0.67208900  0.45826800  1
+  Cl  Cl7  1  0.84649200  0.66273900  0.08928200  1
+  Cl  Cl8  1  0.67793700  0.32851800  0.55700700  1
+  O  O9  1  0.36927500  0.96162200  0.84137700  1
+  O  O10  1  0.11936400  0.11405000  0.34209700  1
+  O  O11  1  0.64597700  0.06301300  0.15444600  1
+  O  O12  1  0.86316600  0.90138600  0.65690300  1

@@ -1,0 +1,43 @@
+# generated using pymatgen
+data_Pr4Mg7Ge6
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   8.66444323
+_cell_length_b   8.66444323
+_cell_length_c   12.57446325
+_cell_angle_alpha   58.75108545
+_cell_angle_beta   58.75108545
+_cell_angle_gamma   29.62187164
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   Pr4Mg7Ge6
+_chemical_formula_sum   'Pr4 Mg7 Ge6'
+_cell_volume   393.73276231
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Pr  Pr0  1  0.26700398  0.26700398  0.61318382  1
+  Pr  Pr1  1  0.73299602  0.73299602  0.38681618  1
+  Pr  Pr2  1  0.37035461  0.37035461  0.84054438  1
+  Pr  Pr3  1  0.62964539  0.62964539  0.15945562  1
+  Mg  Mg4  1  0.03986617  0.03986617  0.86135529  1
+  Mg  Mg5  1  0.96013383  0.96013383  0.13864471  1
+  Mg  Mg6  1  0.06204713  0.06204713  0.60398264  1
+  Mg  Mg7  1  0.93795287  0.93795287  0.39601736  1
+  Mg  Mg8  1  0.68959104  0.68959104  0.84535599  1
+  Mg  Mg9  1  0.31040896  0.31040896  0.15464401  1
+  Mg  Mg10  1  0.50000000  0.50000000  0.50000000  1
+  Ge  Ge11  1  0.11944529  0.11944529  0.34945060  1
+  Ge  Ge12  1  0.88055471  0.88055471  0.65054940  1
+  Ge  Ge13  1  0.14818727  0.14818727  0.97383085  1
+  Ge  Ge14  1  0.85181273  0.85181273  0.02616915  1
+  Ge  Ge15  1  0.60759785  0.60759785  0.68960336  1
+  Ge  Ge16  1  0.39240215  0.39240215  0.31039664  1

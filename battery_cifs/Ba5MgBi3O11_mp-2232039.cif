@@ -1,0 +1,46 @@
+# generated using pymatgen
+data_Ba5MgBi3O11
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   6.44109061
+_cell_length_b   6.52628773
+_cell_length_c   9.85641552
+_cell_angle_alpha   91.14443976
+_cell_angle_beta   81.64334308
+_cell_angle_gamma   89.12956102
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   Ba5MgBi3O11
+_chemical_formula_sum   'Ba5 Mg1 Bi3 O11'
+_cell_volume   409.77887821
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Ba  Ba0  1  0.51675780  0.96787922  0.22893528  1
+  Ba  Ba1  1  0.61596718  0.02638281  0.82774687  1
+  Ba  Ba2  1  0.93530606  0.05200272  0.48397327  1
+  Ba  Ba3  1  0.97081087  0.48929358  0.24215279  1
+  Ba  Ba4  1  0.09287227  0.52960428  0.82339273  1
+  Mg  Mg5  1  0.81537189  0.59459102  0.60691058  1
+  Bi  Bi6  1  0.06393885  0.00834770  0.02316495  1
+  Bi  Bi7  1  0.55098928  0.50287424  0.00316254  1
+  Bi  Bi8  1  0.41612362  0.50485179  0.46098881  1
+  O  O9  1  0.77361895  0.23136512  0.04015872  1
+  O  O10  1  0.28980142  0.27273293  0.98178084  1
+  O  O11  1  0.81545768  0.73065347  0.04289413  1
+  O  O12  1  0.09272876  0.02812156  0.23145181  1
+  O  O13  1  0.58870061  0.22759153  0.42213858  1
+  O  O14  1  0.37640500  0.56551357  0.25459149  1
+  O  O15  1  0.33906159  0.77608056  0.96272561  1
+  O  O16  1  0.70818867  0.70501602  0.44061430  1
+  O  O17  1  0.06030633  0.41532334  0.53352128  1
+  O  O18  1  0.66275820  0.45208297  0.77725308  1
+  O  O19  1  0.93153397  0.83424058  0.69815635  1

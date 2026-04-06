@@ -1,0 +1,51 @@
+# generated using pymatgen
+data_MgCr4(PbO4)4
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   7.17927947
+_cell_length_b   7.55066464
+_cell_length_c   7.60861963
+_cell_angle_alpha   90.55873214
+_cell_angle_beta   90.13919543
+_cell_angle_gamma   103.11401137
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   MgCr4(PbO4)4
+_chemical_formula_sum   'Mg1 Cr4 Pb4 O16'
+_cell_volume   401.67041393
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mg  Mg0  1  0.64832100  0.02821100  0.42160800  1
+  Cr  Cr1  1  0.38190100  0.68545700  0.32620400  1
+  Cr  Cr2  1  0.88167400  0.22623900  0.16178100  1
+  Cr  Cr3  1  0.11693500  0.80778000  0.84267700  1
+  Cr  Cr4  1  0.61416500  0.30138400  0.65433900  1
+  Pb  Pb5  1  0.91638500  0.68440400  0.38755300  1
+  Pb  Pb6  1  0.61610000  0.83945500  0.89622600  1
+  Pb  Pb7  1  0.06327000  0.27423700  0.64553800  1
+  Pb  Pb8  1  0.39120500  0.22716100  0.10304800  1
+  O  O9  1  0.29130200  0.86336000  0.29235000  1
+  O  O10  1  0.18087800  0.61679200  0.80417200  1
+  O  O11  1  0.71760500  0.11164600  0.69782300  1
+  O  O12  1  0.80758500  0.41869400  0.18672700  1
+  O  O13  1  0.20765200  0.52486800  0.41014300  1
+  O  O14  1  0.32191900  0.96149700  0.90554600  1
+  O  O15  1  0.82808900  0.45902900  0.60258000  1
+  O  O16  1  0.66141500  0.05042000  0.13673000  1
+  O  O17  1  0.05419900  0.21478600  0.01536700  1
+  O  O18  1  0.49295600  0.22361800  0.46590700  1
+  O  O19  1  0.94788700  0.78448200  0.99525200  1
+  O  O20  1  0.57885800  0.75761900  0.46079500  1
+  O  O21  1  0.92709100  0.14094000  0.37131200  1
+  O  O22  1  0.49734900  0.36116200  0.82768600  1
+  O  O23  1  0.02903800  0.87948800  0.65833400  1
+  O  O24  1  0.45584900  0.61283100  0.13863500  1

@@ -1,0 +1,50 @@
+# generated using pymatgen
+data_NaHfCuSe3
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   3.82389632
+_cell_length_b   10.24781809
+_cell_length_c   13.55338593
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   NaHfCuSe3
+_chemical_formula_sum   'Na4 Hf4 Cu4 Se12'
+_cell_volume   531.11103017
+_cell_formula_units_Z   4
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Na  Na0  1  0.25000000  0.04203851  0.22888619  1
+  Na  Na1  1  0.75000000  0.95796149  0.77111381  1
+  Na  Na2  1  0.75000000  0.54203851  0.27111381  1
+  Na  Na3  1  0.25000000  0.45796149  0.72888619  1
+  Hf  Hf4  1  0.25000000  0.32176765  0.01046712  1
+  Hf  Hf5  1  0.75000000  0.67823235  0.98953288  1
+  Hf  Hf6  1  0.75000000  0.82176765  0.48953288  1
+  Hf  Hf7  1  0.25000000  0.17823235  0.51046712  1
+  Cu  Cu8  1  0.25000000  0.58920520  0.49226862  1
+  Cu  Cu9  1  0.75000000  0.41079480  0.50773138  1
+  Cu  Cu10  1  0.75000000  0.08920520  0.00773138  1
+  Cu  Cu11  1  0.25000000  0.91079480  0.99226862  1
+  Se  Se12  1  0.25000000  0.56408316  0.10175544  1
+  Se  Se13  1  0.75000000  0.43591684  0.89824456  1
+  Se  Se14  1  0.75000000  0.06408316  0.39824456  1
+  Se  Se15  1  0.25000000  0.93591684  0.60175544  1
+  Se  Se16  1  0.25000000  0.37959012  0.39483643  1
+  Se  Se17  1  0.75000000  0.62040988  0.60516357  1
+  Se  Se18  1  0.75000000  0.87959012  0.10516357  1
+  Se  Se19  1  0.25000000  0.12040988  0.89483643  1
+  Se  Se20  1  0.25000000  0.75244544  0.36326282  1
+  Se  Se21  1  0.75000000  0.24755456  0.63673718  1
+  Se  Se22  1  0.75000000  0.25244544  0.13673718  1
+  Se  Se23  1  0.25000000  0.74755456  0.86326282  1

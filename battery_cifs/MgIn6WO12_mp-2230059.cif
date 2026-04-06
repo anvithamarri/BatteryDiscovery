@@ -1,0 +1,46 @@
+# generated using pymatgen
+data_MgIn6WO12
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   6.45905433
+_cell_length_b   6.45905480
+_cell_length_c   6.45905396
+_cell_angle_alpha   92.00639342
+_cell_angle_beta   92.00640480
+_cell_angle_gamma   92.00639327
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   MgIn6WO12
+_chemical_formula_sum   'Mg1 In6 W1 O12'
+_cell_volume   268.96026153
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mg  Mg0  1  0.22958558  0.22958558  0.22958558  1
+  In  In1  1  0.40954317  0.90222387  0.71850257  1
+  In  In2  1  0.90222387  0.71850257  0.40954317  1
+  In  In3  1  0.71850257  0.40954317  0.90222388  1
+  In  In4  1  0.67862637  0.18250824  0.41076587  1
+  In  In5  1  0.18250824  0.41076587  0.67862637  1
+  In  In6  1  0.41076587  0.67862637  0.18250824  1
+  W  W7  1  0.96020507  0.96020507  0.96020507  1
+  O  O8  1  0.17408696  0.53593178  0.35847621  1
+  O  O9  1  0.53593178  0.35847621  0.17408696  1
+  O  O10  1  0.35847621  0.17408696  0.53593178  1
+  O  O11  1  0.83814905  0.43207436  0.59196045  1
+  O  O12  1  0.43207436  0.59196045  0.83814905  1
+  O  O13  1  0.59196045  0.83814905  0.43207436  1
+  O  O14  1  0.69817560  0.06169940  0.84101576  1
+  O  O15  1  0.04419703  0.27419691  0.94974173  1
+  O  O16  1  0.94974173  0.04419703  0.27419691  1
+  O  O17  1  0.27419691  0.94974173  0.04419703  1
+  O  O18  1  0.84101576  0.69817560  0.06169940  1
+  O  O19  1  0.06169940  0.84101576  0.69817560  1
