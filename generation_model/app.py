@@ -3,6 +3,8 @@ import torch
 import os
 import io
 import traceback
+import py3Dmol  # ✅ NEW
+
 from ase.io import read, write
 from ase.optimize import BFGS
 
@@ -15,49 +17,58 @@ from CIFTokenizer import CIFTokenizer
 from mcts import MCTSSampler, MCTSEvaluator, PUCTSelector, ContextSensitiveTreeBuilder
 from scorer import HeuristicPhysicalScorer
 
+
+# --- 🔥 NEW: 3D Visualization Function ---
+def visualize_structure(cif_string):
+    try:
+        if isinstance(cif_string, (bytes, bytearray)):
+            cif_string = cif_string.decode('utf-8')
+
+        view = py3Dmol.view(width=700, height=500)
+        view.addModel(cif_string, "cif")
+
+        view.setStyle({
+            "sphere": {"colorscheme": "Jmol", "scale": 0.3},
+            "stick": {}
+        })
+
+        view.zoomTo()
+        return view._make_html()
+
+    except Exception as e:
+        return f"<p>Error in visualization: {str(e)}</p>"
+
+
 # --- Official CHGNet Relaxation & Analysis Function ---
 def analyze_and_relax(cif_string, device):
-    """
-    Analyzes the initial energy/forces and relaxes the structure 
-    to find real-world stability.
-    """
     try:
-        # ROBUST TYPE CHECK: Ensure we have a proper string
         if isinstance(cif_string, (bytes, bytearray)):
             cif_string = cif_string.decode('utf-8')
         elif not isinstance(cif_string, str):
             cif_string = str(cif_string)
 
-        # Strip null bytes or stray characters that can corrupt the CIF
         cif_string = cif_string.replace('\x00', '').strip()
 
         chgnet_device = "cpu" if device == "mps" else device
 
-        # Use BytesIO — ASE's CIF reader is more reliable with bytes than StringIO
         cif_bytes = cif_string.encode('utf-8')
         struct = read(io.BytesIO(cif_bytes), format='cif')
 
-        # Extract formula for UI feedback
         formula = struct.get_chemical_formula()
 
-        # Attach CHGNet Calculator
         calc = CHGNetCalculator(use_device=chgnet_device)
         struct.calc = calc
 
-        # 1. Capture Raw (Initial) State
         raw_energy = struct.get_potential_energy()
         raw_forces = struct.get_forces()
         max_force_initial = torch.tensor(raw_forces).abs().max().item()
 
-        # 2. Perform Relaxation (Structure Optimization)
         dyn = BFGS(struct, logfile=None)
         dyn.run(fmax=0.1, steps=50)
 
-        # 3. Capture Final State
         final_energy = struct.get_potential_energy()
         energy_per_atom = final_energy / len(struct)
 
-        # Write optimized structure to BytesIO, then decode for Streamlit
         out_buf = io.BytesIO()
         write(out_buf, struct, format='cif')
         optimized_cif = out_buf.getvalue().decode('utf-8')
@@ -136,7 +147,6 @@ if st.button("Start Discovery & Analysis", type="primary"):
     start_prompt = "data_"
 
     try:
-        # MCTS Setup
         external_scorer = HeuristicPhysicalScorer(target_density=target_rho)
         evaluator = MCTSEvaluator(scorer=external_scorer, tokenizer=tokenizer)
         selector = PUCTSelector(cpuct=c_puct)
@@ -149,17 +159,14 @@ if st.button("Start Discovery & Analysis", type="primary"):
             tree_builder=tree_builder
         )
 
-        # 1. MCTS Search
         with st.status("AI exploring chemical landscape...", expanded=True) as status:
             sampler.search(start=start_prompt, num_simulations=num_sims)
             status.update(label="Discovery Phase Complete!", state="complete", expanded=False)
 
-        # 2. Results Handling
         best_data = sampler.get_best_sequence()
         if best_data:
             best_seq, best_score = best_data
 
-            # Decode and explicitly ensure string type
             cif_output = tokenizer.decode(best_seq)
             if isinstance(cif_output, (bytes, bytearray)):
                 cif_output = cif_output.decode('utf-8')
@@ -169,14 +176,12 @@ if st.button("Start Discovery & Analysis", type="primary"):
             if len(cif_output) < 200:
                 st.error("Generated structure is incomplete. Please increase simulations.")
             else:
-                # 3. CHGNet Analysis
                 with st.spinner("Running Thermodynamic Stability Analysis..."):
                     results = analyze_and_relax(cif_output, device)
 
                 if results["success"]:
                     st.success(f"Candidate Identified: **{results['formula']}**")
 
-                    # --- FEASIBILITY DASHBOARD (2 metrics only) ---
                     m1, m2 = st.columns(2)
 
                     m1.metric(
@@ -188,33 +193,29 @@ if st.button("Start Discovery & Analysis", type="primary"):
 
                     m2.metric(
                         label="Structural Tension",
-                        value=f"{results['max_force']:.3f} eV/Å",
-                        help="Lower is better. Forces > 1.0 suggest an unstable lattice."
+                        value=f"{results['max_force']:.3f} eV/Å"
                     )
 
                     st.divider()
 
-                    # --- SYNTHESIS PROBABILITY (full width) ---
                     st.subheader("Synthesis Probability")
                     energy = results['energy_per_atom']
                     if energy < -4.0:
-                        st.success("**HIGH FEASIBILITY**: Energetically stable. This material is a strong candidate for laboratory synthesis.")
+                        st.success("HIGH FEASIBILITY")
                     elif -4.0 <= energy < -1.0:
-                        st.warning("**METASTABLE**: This structure may exist under specific pressure/temperature conditions but is less stable.")
+                        st.warning("METASTABLE")
                     else:
-                        st.error("**UNSTABLE**: Energetically unfavorable. This structure is unlikely to form in a real-world environment.")
+                        st.error("UNSTABLE")
 
                     st.divider()
 
-                    # --- ENERGY PROFILE ---
-                    with st.expander("View Energy Profile"):
-                        st.write(f"Pre-Optimization Energy:  {results['raw_energy']:.4f} eV")
-                        st.write(f"Post-Optimization Energy: {results['final_energy']:.4f} eV")
-                        st.caption("A large energy drop indicates the optimizer successfully fixed atomic overlaps.")
+                    # --- 🔥 NEW 3D VISUALIZATION ---
+                    st.subheader("3D Crystal Structure Visualization")
+                    html_view = visualize_structure(results['cif'])
+                    st.components.v1.html(html_view, height=550)
 
                     st.divider()
 
-                    # --- FULL CIF FILE ---
                     st.subheader("Generated CIF Structure")
                     st.code(results['cif'], language="text")
 
@@ -228,7 +229,7 @@ if st.button("Start Discovery & Analysis", type="primary"):
                 else:
                     st.error(f"CHGNet Stability Error: {results['error']}")
         else:
-            st.error("The search tree failed to converge on a valid crystal. Try increasing Width or Simulations.")
+            st.error("The search tree failed to converge on a valid crystal.")
 
     except Exception:
         st.error("The Discovery Engine encountered a fatal error.")
