@@ -17,27 +17,38 @@ from CIFTokenizer import CIFTokenizer
 from mcts import MCTSSampler, MCTSEvaluator, PUCTSelector, ContextSensitiveTreeBuilder
 from scorer import HeuristicPhysicalScorer
 
+from stmol import showmol
 
 # --- 🔥 NEW: 3D Visualization Function ---
+
+
+
 def visualize_structure(cif_string):
     try:
         if isinstance(cif_string, (bytes, bytearray)):
             cif_string = cif_string.decode('utf-8')
 
+        # Initialize the viewer
         view = py3Dmol.view(width=700, height=500)
         view.addModel(cif_string, "cif")
 
+        # Set styling - Using 'stick' and 'sphere' makes rotation visually clearer
         view.setStyle({
             "sphere": {"colorscheme": "Jmol", "scale": 0.3},
-            "stick": {}
+            "stick": {"colorscheme": "Jmol", "radius": 0.15}
         })
-
+        
+        # Add a unit cell box (crucial for crystal structures)
+        #view.addUnitCell()
+        
         view.zoomTo()
-        return view._make_html()
-
+        
+        # This renders the viewer directly into the Streamlit app
+        # and enables mouse interaction (rotation/zoom) automatically
+        showmol(view, height=500, width=700)
+        
     except Exception as e:
-        return f"<p>Error in visualization: {str(e)}</p>"
-
+        st.error(f"Error in visualization: {str(e)}")
 
 # --- Official CHGNet Relaxation & Analysis Function ---
 def analyze_and_relax(cif_string, device):
@@ -211,8 +222,9 @@ if st.button("Start Discovery & Analysis", type="primary"):
 
                     # --- 🔥 NEW 3D VISUALIZATION ---
                     st.subheader("3D Crystal Structure Visualization")
-                    html_view = visualize_structure(results['cif'])
-                    st.components.v1.html(html_view, height=550)
+                    #html_view = visualize_structure(results['cif'])
+                    #st.components.v1.html(html_view, height=550)
+                    visualize_structure(results['cif'])
 
                     st.divider()
 
