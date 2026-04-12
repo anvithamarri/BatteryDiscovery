@@ -3,7 +3,7 @@ import torch
 import os
 import io
 import traceback
-import py3Dmol  # ✅ NEW
+import py3Dmol  
 
 from ase.io import read, write
 from ase.optimize import BFGS
@@ -19,7 +19,7 @@ from scorer import HeuristicPhysicalScorer
 
 from stmol import showmol
 
-# --- 🔥 NEW: 3D Visualization Function ---
+# ---  NEW: 3D Visualization Function ---
 
 
 
@@ -220,7 +220,7 @@ if st.button("Start Discovery & Analysis", type="primary"):
 
                     st.divider()
 
-                    # --- 🔥 NEW 3D VISUALIZATION ---
+                    # ---  NEW 3D VISUALIZATION ---
                     st.subheader("3D Crystal Structure Visualization")
                     #html_view = visualize_structure(results['cif'])
                     #st.components.v1.html(html_view, height=550)
