@@ -1,0 +1,46 @@
+# generated using pymatgen
+data_Mg2GeB2Ir5
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   2.92420492
+_cell_length_b   9.41744702
+_cell_length_c   9.41744702
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   Mg2GeB2Ir5
+_chemical_formula_sum   'Mg4 Ge2 B4 Ir10'
+_cell_volume   259.34278770
+_cell_formula_units_Z   2
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mg  Mg0  1  0.00000000  0.32510823  0.82510823  1
+  Mg  Mg1  1  -0.00000000  0.67489177  0.17489177  1
+  Mg  Mg2  1  -0.00000000  0.17489177  0.32510823  1
+  Mg  Mg3  1  0.00000000  0.82510823  0.67489177  1
+  Ge  Ge4  1  0.00000000  0.50000000  0.50000000  1
+  Ge  Ge5  1  -0.00000000  0.00000000  -0.00000000  1
+  B  B6  1  0.00000000  0.12519396  0.62519396  1
+  B  B7  1  -0.00000000  0.87480604  0.37480604  1
+  B  B8  1  -0.00000000  0.37480604  0.12519396  1
+  B  B9  1  0.00000000  0.62519396  0.87480604  1
+  Ir  Ir10  1  0.50000000  0.00000000  0.50000000  1
+  Ir  Ir11  1  0.50000000  0.50000000  -0.00000000  1
+  Ir  Ir12  1  0.50000000  0.57262672  0.71285849  1
+  Ir  Ir13  1  0.50000000  0.42737328  0.28714151  1
+  Ir  Ir14  1  0.50000000  0.92737328  0.21285849  1
+  Ir  Ir15  1  0.50000000  0.07262672  0.78714151  1
+  Ir  Ir16  1  0.50000000  0.71285849  0.42737328  1
+  Ir  Ir17  1  0.50000000  0.28714151  0.57262672  1
+  Ir  Ir18  1  0.50000000  0.21285849  0.07262672  1
+  Ir  Ir19  1  0.50000000  0.78714151  0.92737328  1

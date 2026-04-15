@@ -1,0 +1,39 @@
+# generated using pymatgen
+data_K4(NiO2)3
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   5.39229467
+_cell_length_b   5.39229467
+_cell_length_c   7.81256659
+_cell_angle_alpha   89.10150065
+_cell_angle_beta   89.10150065
+_cell_angle_gamma   68.44741739
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   K4(NiO2)3
+_chemical_formula_sum   'K4 Ni3 O6'
+_cell_volume   211.24359035
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  K  K0  1  0.68097773  0.68097773  0.62624179  1
+  K  K1  1  0.31902227  0.31902227  0.37375821  1
+  K  K2  1  0.65263936  0.65263936  0.10521260  1
+  K  K3  1  0.34736064  0.34736064  0.89478740  1
+  Ni  Ni4  1  0.00000000  0.00000000  -0.00000000  1
+  Ni  Ni5  1  0.96372356  0.96372356  0.33130949  1
+  Ni  Ni6  1  0.03627644  0.03627644  0.66869051  1
+  O  O7  1  0.13473761  0.73449341  0.15986770  1
+  O  O8  1  0.73449341  0.13473761  0.15986770  1
+  O  O9  1  0.86526239  0.26550659  0.84013230  1
+  O  O10  1  0.26550659  0.86526239  0.84013230  1
+  O  O11  1  0.19837900  0.80162100  0.50000000  1
+  O  O12  1  0.80162100  0.19837900  0.50000000  1

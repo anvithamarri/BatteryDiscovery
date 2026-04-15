@@ -1,0 +1,50 @@
+# generated using pymatgen
+data_NaZrCuSe3
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   3.84939575
+_cell_length_b   10.32819629
+_cell_length_c   13.56132796
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   NaZrCuSe3
+_chemical_formula_sum   'Na4 Zr4 Cu4 Se12'
+_cell_volume   539.16198622
+_cell_formula_units_Z   4
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Na  Na0  1  0.25000000  0.04438836  0.22846400  1
+  Na  Na1  1  0.75000000  0.95561164  0.77153600  1
+  Na  Na2  1  0.75000000  0.54438836  0.27153600  1
+  Na  Na3  1  0.25000000  0.45561164  0.72846400  1
+  Zr  Zr4  1  0.25000000  0.32179932  0.01040368  1
+  Zr  Zr5  1  0.75000000  0.67820068  0.98959632  1
+  Zr  Zr6  1  0.75000000  0.82179932  0.48959632  1
+  Zr  Zr7  1  0.25000000  0.17820068  0.51040368  1
+  Cu  Cu8  1  0.25000000  0.59097527  0.49189665  1
+  Cu  Cu9  1  0.75000000  0.40902473  0.50810335  1
+  Cu  Cu10  1  0.75000000  0.09097527  0.00810335  1
+  Cu  Cu11  1  0.25000000  0.90902473  0.99189665  1
+  Se  Se12  1  0.25000000  0.56441309  0.10371285  1
+  Se  Se13  1  0.75000000  0.43558691  0.89628715  1
+  Se  Se14  1  0.75000000  0.06441309  0.39628715  1
+  Se  Se15  1  0.25000000  0.93558691  0.60371285  1
+  Se  Se16  1  0.25000000  0.38210471  0.39571145  1
+  Se  Se17  1  0.75000000  0.61789529  0.60428855  1
+  Se  Se18  1  0.75000000  0.88210471  0.10428855  1
+  Se  Se19  1  0.25000000  0.11789529  0.89571145  1
+  Se  Se20  1  0.25000000  0.75162829  0.36216628  1
+  Se  Se21  1  0.75000000  0.24837171  0.63783372  1
+  Se  Se22  1  0.75000000  0.25162829  0.13783372  1
+  Se  Se23  1  0.25000000  0.74837171  0.86216628  1

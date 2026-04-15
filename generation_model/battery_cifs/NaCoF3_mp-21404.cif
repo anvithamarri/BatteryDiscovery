@@ -1,0 +1,46 @@
+# generated using pymatgen
+data_NaCoF3
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   5.36910055
+_cell_length_b   5.57463889
+_cell_length_c   7.70449501
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   NaCoF3
+_chemical_formula_sum   'Na4 Co4 F12'
+_cell_volume   230.60167405
+_cell_formula_units_Z   4
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Na  Na0  1  0.01805395  0.93891654  0.75000000  1
+  Na  Na1  1  0.51805395  0.56108346  0.25000000  1
+  Na  Na2  1  0.48194605  0.43891654  0.75000000  1
+  Na  Na3  1  0.98194605  0.06108346  0.25000000  1
+  Co  Co4  1  0.50000000  0.00000000  0.50000000  1
+  Co  Co5  1  -0.00000000  0.50000000  0.50000000  1
+  Co  Co6  1  -0.00000000  0.50000000  0.00000000  1
+  Co  Co7  1  0.50000000  0.00000000  0.00000000  1
+  F  F8  1  0.69248966  0.30316819  0.44142445  1
+  F  F9  1  0.19248966  0.19683181  0.55857555  1
+  F  F10  1  0.80751034  0.80316819  0.05857555  1
+  F  F11  1  0.30751034  0.69683181  0.94142445  1
+  F  F12  1  0.30751034  0.69683181  0.55857555  1
+  F  F13  1  0.80751034  0.80316819  0.44142445  1
+  F  F14  1  0.19248966  0.19683181  0.94142445  1
+  F  F15  1  0.69248966  0.30316819  0.05857555  1
+  F  F16  1  0.11261682  0.45970993  0.25000000  1
+  F  F17  1  0.61261682  0.04029007  0.75000000  1
+  F  F18  1  0.38738318  0.95970993  0.25000000  1
+  F  F19  1  0.88738318  0.54029007  0.75000000  1

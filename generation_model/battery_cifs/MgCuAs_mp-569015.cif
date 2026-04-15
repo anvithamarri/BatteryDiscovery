@@ -1,0 +1,50 @@
+# generated using pymatgen
+data_MgCuAs
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   3.95459967
+_cell_length_b   7.35366599
+_cell_length_c   13.43008339
+_cell_angle_alpha   90.00000000
+_cell_angle_beta   90.00000000
+_cell_angle_gamma   90.00000000
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   MgCuAs
+_chemical_formula_sum   'Mg8 Cu8 As8'
+_cell_volume   390.55763751
+_cell_formula_units_Z   8
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mg  Mg0  1  0.25000000  0.32801699  0.14270024  1
+  Mg  Mg1  1  0.25000000  0.44392922  0.39348663  1
+  Mg  Mg2  1  0.75000000  0.94392922  0.10651337  1
+  Mg  Mg3  1  0.75000000  0.82801699  0.35729976  1
+  Mg  Mg4  1  0.75000000  0.55607078  0.60651337  1
+  Mg  Mg5  1  0.75000000  0.67198301  0.85729976  1
+  Mg  Mg6  1  0.25000000  0.05607078  0.89348663  1
+  Mg  Mg7  1  0.25000000  0.17198301  0.64270024  1
+  Cu  Cu8  1  0.25000000  0.06987546  0.43331786  1
+  Cu  Cu9  1  0.25000000  0.69913650  0.18627648  1
+  Cu  Cu10  1  0.75000000  0.56987546  0.06668214  1
+  Cu  Cu11  1  0.25000000  0.43012454  0.93331786  1
+  Cu  Cu12  1  0.25000000  0.80086350  0.68627648  1
+  Cu  Cu13  1  0.75000000  0.93012454  0.56668214  1
+  Cu  Cu14  1  0.75000000  0.30086350  0.81372352  1
+  Cu  Cu15  1  0.75000000  0.19913650  0.31372352  1
+  As  As16  1  0.25000000  0.74968057  0.50010637  1
+  As  As17  1  0.75000000  0.25031943  0.49989363  1
+  As  As18  1  0.75000000  0.24968057  -0.00010637  1
+  As  As19  1  0.25000000  0.02037739  0.24667192  1
+  As  As20  1  0.75000000  0.52037739  0.25332808  1
+  As  As21  1  0.25000000  0.47962261  0.74667192  1
+  As  As22  1  0.25000000  0.75031943  0.00010637  1
+  As  As23  1  0.75000000  0.97962261  0.75332808  1

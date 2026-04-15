@@ -1,0 +1,32 @@
+# generated using pymatgen
+data_MgCd
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   5.80761770
+_cell_length_b   5.80761770
+_cell_length_c   7.52746522
+_cell_angle_alpha   74.76862210
+_cell_angle_beta   74.76862210
+_cell_angle_gamma   31.44557832
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   MgCd
+_chemical_formula_sum   'Mg3 Cd3'
+_cell_volume   127.42259887
+_cell_formula_units_Z   3
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mg  Mg0  1  0.01078836  0.01078836  0.99460183  1
+  Mg  Mg1  1  0.38250785  0.38250785  0.72554848  1
+  Mg  Mg2  1  0.33010744  0.33010744  0.33712463  1
+  Cd  Cd3  1  0.66188609  0.66188609  0.66499706  1
+  Cd  Cd4  1  0.05021139  0.05021139  0.38482947  1
+  Cd  Cd5  1  0.73116587  0.73116587  0.05956553  1

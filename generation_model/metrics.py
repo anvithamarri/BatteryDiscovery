@@ -20,26 +20,48 @@ def extract_data_formula(cif_str):
     raise Exception(f"could not find data_ in:\n{cif_str}")
 
 def replace_symmetry_operators(cif_str, space_group_symbol):
-    space_group = SpaceGroup(space_group_symbol)
+    # 1. CLEAN THE SYMBOL
+    # Remove common hallucination suffixes and whitespace
+    clean_symbol = re.sub(r'(_sg|spacegroup|sg|_|\s+)', '', space_group_symbol).strip()
+    
+    # 2. VALIDATION CHECK & INITIALIZATION
+    try:
+        space_group = SpaceGroup(clean_symbol)
+    except ValueError:
+        # Fallback: If it still fails, try splitting by any non-alphanumeric character
+        # This handles cases like 'P2/m-hallucination'
+        clean_symbol = re.split(r'[^A-Za-z0-9/]', clean_symbol)[0]
+        space_group = SpaceGroup(clean_symbol)
+
+    # Use the validated space_group object directly
     symmetry_ops = space_group.symmetry_ops
 
     loops = []
     data = {}
-    symmops = []
-    for op in symmetry_ops:
-        v = op.translation_vector
-        symmops.append(SymmOp.from_rotation_and_translation(op.rotation_matrix, v))
-
-    ops = [op.as_xyz_str() for op in symmops]
+    
+    # Generate the XYZ strings for the symmetry operations
+    ops = [op.as_xyz_str() for op in symmetry_ops]
+    
+    # Pymatgen/CIF standard keys
     data["_symmetry_equiv_pos_site_id"] = [f"{i}" for i in range(1, len(ops) + 1)]
-    data["_symmetry_equiv_pos_as_xyz"] = ops
+    data["_symmetry_equiv_pos_as_xyz"] = [f"'{op}'" for op in ops] # Standard CIF requires quotes
 
     loops.append(["_symmetry_equiv_pos_site_id", "_symmetry_equiv_pos_as_xyz"])
 
+    # Build the CIF block
     symm_block = str(CifBlock(data, loops, "")).replace("data_\n", "")
 
-    pattern = r"(loop_\n_symmetry_equiv_pos_site_id\n_symmetry_equiv_pos_as_xyz\n1 'x, y, z')"
-    cif_str_updated = re.sub(pattern, symm_block, cif_str)
+    # 3. REGEX REPLACEMENT
+    # Updated pattern to be slightly more flexible with whitespace/newlines
+    pattern = r"loop_\s*_symmetry_equiv_pos_site_id\s*_symmetry_equiv_pos_as_xyz\s*1\s*'x,\s*y,\s*z'"
+    
+    # If the pattern exists, replace it; otherwise, you might need to append it
+    if re.search(pattern, cif_str):
+        cif_str_updated = re.sub(pattern, symm_block.strip(), cif_str)
+    else:
+        # Fallback for different CIF tag variations like _space_group_symop_operation_xyz
+        alt_pattern = r"loop_\s*_space_group_symop_operation_xyz\s*'x,\s*y,\s*z'"
+        cif_str_updated = re.sub(alt_pattern, symm_block.strip(), cif_str)
 
     return cif_str_updated
 
@@ -223,3 +245,33 @@ def remove_atom_props_block(cif):
     pattern = re.compile(r"(data_[^\n]*\n)loop_[\s\S]*?(_symmetry_space_group_name_H-M)", re.MULTILINE)
     new_cif = re.sub(pattern, r"\1\2", cif)
     return new_cif
+
+def harmonize_lattice(cif_str, space_group_symbol):
+    # 1. Get the crystal system (Cubic, Tetragonal, etc.)
+    clean_symbol = re.sub(r'(_sg|spacegroup|sg|_|\s+)', '', space_group_symbol).strip()
+    sg = SpaceGroup(clean_symbol)
+    system = sg.crystal_system 
+
+    # 2. Parse current values
+    a = float(re.search(r"_cell_length_a\s+([\d\.]+)", cif_str).group(1))
+    b = float(re.search(r"_cell_length_b\s+([\d\.]+)", cif_str).group(1))
+    c = float(re.search(r"_cell_length_c\s+([\d\.]+)", cif_str).group(1))
+
+    # 3. Apply Symmetry Constraints
+    if system == "cubic":
+        # Rule: a = b = c
+        avg = (a + b + c) / 3
+        cif_str = re.sub(r"_cell_length_a\s+[\d\.]+", f"_cell_length_a {avg:.4f}", cif_str)
+        cif_str = re.sub(r"_cell_length_b\s+[\d\.]+", f"_cell_length_b {avg:.4f}", cif_str)
+        cif_str = re.sub(r"_cell_length_c\s+[\d\.]+", f"_cell_length_c {avg:.4f}", cif_str)
+        # Rule: angles must be 90
+        cif_str = re.sub(r"_cell_angle_(alpha|beta|gamma)\s+[\d\.]+", r"_cell_angle_\1 90.0", cif_str)
+
+    elif system == "tetragonal":
+        # Rule: a = b != c
+        avg_ab = (a + b) / 2
+        cif_str = re.sub(r"_cell_length_a\s+[\d\.]+", f"_cell_length_a {avg_ab:.4f}", cif_str)
+        cif_str = re.sub(r"_cell_length_b\s+[\d\.]+", f"_cell_length_b {avg_ab:.4f}", cif_str)
+        cif_str = re.sub(r"_cell_angle_(alpha|beta|gamma)\s+[\d\.]+", r"_cell_angle_\1 90.0", cif_str)
+        
+    return cif_str

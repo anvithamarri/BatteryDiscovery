@@ -7,6 +7,9 @@ import py3Dmol
 
 from ase.io import read, write
 from ase.optimize import BFGS
+import numpy as np
+from ase.filters import ExpCellFilter
+
 
 # OFFICIAL CHGNet IMPORT
 from chgnet.model.dynamics import CHGNetCalculator 
@@ -20,7 +23,6 @@ from scorer import HeuristicPhysicalScorer
 from stmol import showmol
 
 # ---  NEW: 3D Visualization Function ---
-
 
 
 def visualize_structure(cif_string):
@@ -53,6 +55,7 @@ def visualize_structure(cif_string):
 # --- Official CHGNet Relaxation & Analysis Function ---
 def analyze_and_relax(cif_string, device):
     try:
+        # --- Clean input ---
         if isinstance(cif_string, (bytes, bytearray)):
             cif_string = cif_string.decode('utf-8')
         elif not isinstance(cif_string, str):
@@ -60,41 +63,75 @@ def analyze_and_relax(cif_string, device):
 
         cif_string = cif_string.replace('\x00', '').strip()
 
-        chgnet_device = "cpu" if device == "mps" else device
-
-        cif_bytes = cif_string.encode('utf-8')
-        struct = read(io.BytesIO(cif_bytes), format='cif')
-
+        # --- Read structure ---
+        struct = read(io.BytesIO(cif_string.encode('utf-8')), format='cif')
         formula = struct.get_chemical_formula()
 
+        # --- Attach CHGNet ---
+        chgnet_device = "cpu" if device == "mps" else device
         calc = CHGNetCalculator(use_device=chgnet_device)
         struct.calc = calc
 
+        # --- Initial evaluation ---
         raw_energy = struct.get_potential_energy()
         raw_forces = struct.get_forces()
-        max_force_initial = torch.tensor(raw_forces).abs().max().item()
+        max_force_initial = np.abs(raw_forces).max()
 
-        dyn = BFGS(struct, logfile=None)
-        dyn.run(fmax=0.1, steps=50)
+        # --- SAFETY: check bad geometry ---
+        dist_matrix = struct.get_all_distances(mic=True)
+        min_dist = np.min(dist_matrix[np.nonzero(dist_matrix)])
 
+        if min_dist < 1.5:
+            return {
+                "success": False,
+                "error": f"Unphysical structure (atoms too close: {min_dist:.2f} Å)"
+            }
+
+        # --- FULL RELAXATION (cell + atoms) ---
+        ecf = ExpCellFilter(struct)
+
+        dyn = BFGS(ecf, logfile=None)
+
+        dyn.run(fmax=0.02, steps=200)
+
+        # --- Final evaluation ---
         final_energy = struct.get_potential_energy()
+        final_forces = struct.get_forces()
+        max_force_final = np.abs(final_forces).max()
+
         energy_per_atom = final_energy / len(struct)
 
+        # --- Write optimized CIF ---
         out_buf = io.BytesIO()
         write(out_buf, struct, format='cif')
         optimized_cif = out_buf.getvalue().decode('utf-8')
 
         return {
+            "success": True,
             "cif": optimized_cif,
             "formula": formula,
+
+            # Energies
             "raw_energy": raw_energy,
             "final_energy": final_energy,
             "energy_per_atom": energy_per_atom,
-            "max_force": max_force_initial,
-            "success": True
+
+            # Forces
+            "max_force_initial": float(max_force_initial),
+            "max_force": float(max_force_final),
+
+            # Geometry sanity
+            "min_distance": float(min_dist),
+
+            # Relaxation quality
+            "converged": max_force_final < 0.02
         }
+
     except Exception as e:
-        return {"success": False, "error": str(e)}
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 
 # --- Backend Loading ---
@@ -143,7 +180,7 @@ st.sidebar.success(f"Hardware: {device.upper()}")
 
 st.sidebar.divider()
 st.sidebar.header("Search Settings")
-num_sims = st.sidebar.slider("MCTS Simulations", 10, 1000, 300)
+num_sims = st.sidebar.slider("MCTS Simulations", 10, 1000, 10)
 width = st.sidebar.slider("Branching Width (Top-K)", 5, 100, 30)
 temp = st.sidebar.slider("Creativity (Temperature)", 0.1, 1.5, 0.8)
 
@@ -204,7 +241,8 @@ if st.button("Start Discovery & Analysis", type="primary"):
 
                     m2.metric(
                         label="Structural Tension",
-                        value=f"{results['max_force']:.3f} eV/Å"
+                        value=f"{results['max_force']:.3f} eV/Å",
+                        delta=f"{results['max_force_initial'] - results['max_force']:.3f} reduction"
                     )
 
                     st.divider()

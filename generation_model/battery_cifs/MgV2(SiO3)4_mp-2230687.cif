@@ -1,0 +1,45 @@
+# generated using pymatgen
+data_MgV2(SiO3)4
+_symmetry_space_group_name_H-M   'P 1'
+_cell_length_a   6.64208611
+_cell_length_b   6.64208669
+_cell_length_c   5.36482319
+_cell_angle_alpha   74.33678442
+_cell_angle_beta   105.66321296
+_cell_angle_gamma   96.40341340
+_symmetry_Int_Tables_number   1
+_chemical_formula_structural   MgV2(SiO3)4
+_chemical_formula_sum   'Mg1 V2 Si4 O12'
+_cell_volume   219.23911089
+_cell_formula_units_Z   1
+loop_
+ _symmetry_equiv_pos_site_id
+ _symmetry_equiv_pos_as_xyz
+  1  'x, y, z'
+loop_
+ _atom_site_type_symbol
+ _atom_site_label
+ _atom_site_symmetry_multiplicity
+ _atom_site_fract_x
+ _atom_site_fract_y
+ _atom_site_fract_z
+ _atom_site_occupancy
+  Mg  Mg0  1  0.72623400  0.72623400  0.75000000  1
+  V  V1  1  0.10446900  0.10446900  0.75000000  1
+  V  V2  1  0.90997900  0.90997900  0.25000000  1
+  Si  Si3  1  0.20882200  0.61071700  0.77086300  1
+  Si  Si4  1  0.38474300  0.79118900  0.26351000  1
+  Si  Si5  1  0.61071700  0.20882200  0.72913700  1
+  Si  Si6  1  0.79118900  0.38474300  0.23649000  1
+  O  O7  1  0.02709500  0.79233400  0.65159800  1
+  O  O8  1  0.19313800  0.95436200  0.14453300  1
+  O  O9  1  0.09615900  0.38523400  0.78947200  1
+  O  O10  1  0.37160100  0.66046800  0.57192800  1
+  O  O11  1  0.62817300  0.87485800  0.34266800  1
+  O  O12  1  0.35657300  0.64260100  0.05681000  1
+  O  O13  1  0.66046800  0.37160100  0.92807200  1
+  O  O14  1  0.38523400  0.09615900  0.71052800  1
+  O  O15  1  0.64260100  0.35657300  0.44319000  1
+  O  O16  1  0.87485800  0.62817300  0.15733200  1
+  O  O17  1  0.79233400  0.02709500  0.84840200  1
+  O  O18  1  0.95436200  0.19313800  0.35546700  1

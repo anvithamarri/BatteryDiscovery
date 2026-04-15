@@ -17,6 +17,7 @@ from model_utils import (
 )
 from metrics import (
     bond_length_reasonableness_score,
+    harmonize_lattice,
     is_formula_consistent,
     is_space_group_consistent,
     is_atom_site_multiplicity_consistent,
@@ -53,7 +54,11 @@ class MCTSEvaluator:
 
         # replace the symmetry operators with the correct operators
         space_group_symbol = extract_space_group_symbol(cif_str)
-        if space_group_symbol is not None and space_group_symbol != "P 1":
+        if space_group_symbol:
+            cif_str = harmonize_lattice(cif_str, space_group_symbol)
+    
+    # Then replace symmetry operators
+        if space_group_symbol and space_group_symbol != "P 1":
             cif_str = replace_symmetry_operators(cif_str, space_group_symbol)
 
         # remove atom props
