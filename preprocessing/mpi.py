@@ -4,55 +4,58 @@ from pymatgen.io.cif import CifWriter
 
 # --- SECURE CONFIGURATION ---
 API_KEY = os.getenv("MP_API_KEY")
-
 if not API_KEY:
-    raise ValueError("MP_API_KEY not found! Set it with: export MP_API_KEY='your_key'")
+    raise ValueError("Set MP_API_KEY environment variable.")
 
-SAVE_DIR = "battery_cifs"
-# We define our ions. We will search for each one individually to get the full list.
-BATTERY_IONS = ["Li", "Na", "Mg", "K"]
-STABILITY_THRESHOLD = 0.1 
+SAVE_DIR = "full_battery_dataset"
+IONS = ["Li", "Na", "Mg", "K"]
+METALS = ["Fe", "Mn", "Co", "Ni", "V", "Cr", "Ti", "Cu"]
+STABILITY_THRESHOLD = 0.1  # eV/atom
 
 if not os.path.exists(SAVE_DIR):
     os.makedirs(SAVE_DIR)
 
-def download_battery_data():
-    all_docs = []
-    
+def download_all_battery_cifs():
+    unique_materials = {}
+
     with MPRester(API_KEY) as mpr:
-        for ion in BATTERY_IONS:
-            print(f"Searching for {ion}-based materials...")
-            # We search for materials containing 'ion' and at least one other element (e.g., Li-*)
-            # energy_above_hull=(min, max)
+        for ion in IONS:
+            print(f"\nFetching ALL stable {ion}-based oxide candidates...")
+            
+            # Search for materials with Ion, Oxygen, and a Redox Metal
+            # We don't limit the count here
             docs = mpr.materials.summary.search(
-                elements=[ion], 
+                elements=[ion, "O"],
                 energy_above_hull=(0, STABILITY_THRESHOLD),
+                num_elements=(3, 5), # Ternary to Pentenary
                 fields=["material_id", "structure", "formula_pretty"]
             )
-            all_docs.extend(docs)
-            print(f"Found {len(docs)} for {ion}.")
+            
+            # Filtering for redox metals in the results
+            for doc in docs:
+                if any(m in doc.formula_pretty for m in METALS):
+                    unique_materials[doc.material_id] = doc
 
-        # Remove duplicates (some materials might contain two of our target ions)
-        unique_docs = {doc.material_id: doc for doc in all_docs}.values()
-        print(f"Total unique materials to download: {len(unique_docs)}")
+        total = len(unique_materials)
+        print(f"\n--- TOTAL UNIQUE BATTERY CANDIDATES: {total} ---")
 
-        count = 0
-        for doc in unique_docs:
-            # Format filename to be clean
-            formula = doc.formula_pretty
-            mpid = str(doc.material_id)
-            filename = f"{formula}_{mpid}.cif".replace("/", "_")
+        for count, (mpid, doc) in enumerate(unique_materials.items(), 1):
+            filename = f"{doc.formula_pretty}_{mpid}.cif"
             filepath = os.path.join(SAVE_DIR, filename)
             
-            try:
-                CifWriter(doc.structure).write_file(filepath)
-                count += 1
-                if count % 100 == 0:
-                    print(f"Progress: {count}/{len(unique_docs)} downloaded...")
-            except Exception as e:
-                pass # Skip errors for individual files
+            # Only download if we don't already have it
+            if not os.path.exists(filepath):
+                try:
+                    CifWriter(doc.structure).write_file(filepath)
+                    if count % 100 == 0:
+                        print(f"Progress: {count}/{total} files saved...")
+                except Exception:
+                    continue
+            else:
+                if count % 500 == 0:
+                    print(f"Skipped {count} (already exists)...")
 
-    print(f"\nDone! {count} files saved to '{SAVE_DIR}'")
+    print(f"\nDone! All {total} CIFs are in '{SAVE_DIR}'")
 
 if __name__ == "__main__":
-    download_battery_data()
+    download_all_battery_cifs()

@@ -1,286 +1,177 @@
 import streamlit as st
 import torch
-import os
 import io
-import traceback
-import py3Dmol  
-
+import zipfile
+import numpy as np
+from collections import Counter
 from ase.io import read, write
 from ase.optimize import BFGS
-import numpy as np
 from ase.filters import ExpCellFilter
-
-
-# OFFICIAL CHGNet IMPORT
-from chgnet.model.dynamics import CHGNetCalculator 
-
-# LOCAL IMPORTS
+from chgnet.model.dynamics import CHGNetCalculator
 from model_utils import GPT, GPTConfig
-from CIFTokenizer import CIFTokenizer 
+from CIFTokenizer import CIFTokenizer
 from mcts import MCTSSampler, MCTSEvaluator, PUCTSelector, ContextSensitiveTreeBuilder
 from scorer import HeuristicPhysicalScorer
 
-from stmol import showmol
+# -- CONSTANTS -----------------------------------------------
+REFRACTORY = {"W","Mo","Ta","Nb","Re","Hf","Zr","V","Cr","Ti"}
+PRECIOUS   = {"Au","Ag","Pt","Pd","Ir","Ru","Rh"}
+NON_METALS = {"H","He","C","N","O","F","Ne","P","S","Cl","Ar","Se","Br","Kr","I","Xe","At","Rn"}
 
-# ---  NEW: 3D Visualization Function ---
+# -- HELPERS -------------------------------------------------
+def classify_intermetallic(symbols):
+    if any(s in NON_METALS for s in symbols): return None
+    if all(s in REFRACTORY  for s in symbols): return "Refractory Alloy"
+    if any(s in PRECIOUS    for s in symbols): return "Precious Metal Intermetallic"
+    return "Standard Intermetallic"
 
-
-def visualize_structure(cif_string):
+def analyze_structure(cif_string, device):
     try:
-        if isinstance(cif_string, (bytes, bytearray)):
-            cif_string = cif_string.decode('utf-8')
+        struct = read(io.BytesIO(cif_string.encode()), format="cif")
+        symbols = list(set(struct.get_chemical_symbols()))
+        alloy_type = classify_intermetallic(symbols)
 
-        # Initialize the viewer
-        view = py3Dmol.view(width=700, height=500)
-        view.addModel(cif_string, "cif")
-
-        # Set styling - Using 'stick' and 'sphere' makes rotation visually clearer
-        view.setStyle({
-            "sphere": {"colorscheme": "Jmol", "scale": 0.3},
-            "stick": {"colorscheme": "Jmol", "radius": 0.15}
-        })
-        
-        # Add a unit cell box (crucial for crystal structures)
-        #view.addUnitCell()
-        
-        view.zoomTo()
-        
-        # This renders the viewer directly into the Streamlit app
-        # and enables mouse interaction (rotation/zoom) automatically
-        showmol(view, height=500, width=700)
-        
-    except Exception as e:
-        st.error(f"Error in visualization: {str(e)}")
-
-# --- Official CHGNet Relaxation & Analysis Function ---
-def analyze_and_relax(cif_string, device):
-    try:
-        # --- Clean input ---
-        if isinstance(cif_string, (bytes, bytearray)):
-            cif_string = cif_string.decode('utf-8')
-        elif not isinstance(cif_string, str):
-            cif_string = str(cif_string)
-
-        cif_string = cif_string.replace('\x00', '').strip()
-
-        # --- Read structure ---
-        struct = read(io.BytesIO(cif_string.encode('utf-8')), format='cif')
-        formula = struct.get_chemical_formula()
-
-        # --- Attach CHGNet ---
-        chgnet_device = "cpu" if device == "mps" else device
-        calc = CHGNetCalculator(use_device=chgnet_device)
+        calc = CHGNetCalculator(use_device="cpu" if device == "mps" else device)
         struct.calc = calc
 
-        # --- Initial evaluation ---
-        raw_energy = struct.get_potential_energy()
-        raw_forces = struct.get_forces()
-        max_force_initial = np.abs(raw_forces).max()
-
-        # --- SAFETY: check bad geometry ---
         dist_matrix = struct.get_all_distances(mic=True)
-        min_dist = np.min(dist_matrix[np.nonzero(dist_matrix)])
+        if np.min(dist_matrix[np.nonzero(dist_matrix)]) < 1.5:
+            return None
 
-        if min_dist < 1.5:
-            return {
-                "success": False,
-                "error": f"Unphysical structure (atoms too close: {min_dist:.2f} Å)"
-            }
-
-        # --- FULL RELAXATION (cell + atoms) ---
-        ecf = ExpCellFilter(struct)
-
-        dyn = BFGS(ecf, logfile=None)
-
+        dyn = BFGS(ExpCellFilter(struct), logfile=None)
         dyn.run(fmax=0.02, steps=200)
 
-        # --- Final evaluation ---
-        final_energy = struct.get_potential_energy()
-        final_forces = struct.get_forces()
-        max_force_final = np.abs(final_forces).max()
+        energy = struct.get_potential_energy() / len(struct)
+        force  = np.abs(struct.get_forces()).max()
 
-        energy_per_atom = final_energy / len(struct)
-
-        # --- Write optimized CIF ---
-        out_buf = io.BytesIO()
-        write(out_buf, struct, format='cif')
-        optimized_cif = out_buf.getvalue().decode('utf-8')
+        buf = io.BytesIO()
+        write(buf, struct, format="cif")
 
         return {
-            "success": True,
-            "cif": optimized_cif,
-            "formula": formula,
-
-            # Energies
-            "raw_energy": raw_energy,
-            "final_energy": final_energy,
-            "energy_per_atom": energy_per_atom,
-
-            # Forces
-            "max_force_initial": float(max_force_initial),
-            "max_force": float(max_force_final),
-
-            # Geometry sanity
-            "min_distance": float(min_dist),
-
-            # Relaxation quality
-            "converged": max_force_final < 0.02
+            "formula":          struct.get_chemical_formula(),
+            "cif":              buf.getvalue().decode(),
+            "energy_per_atom":  energy,
+            "force":            force,
+            "is_intermetallic": alloy_type is not None,
+            "type":             alloy_type,
+            "valid":            alloy_type is not None and energy < 0 and force <= 0.05
         }
+    except Exception:
+        return None
 
-    except Exception as e:
-        return {
-            "success": False,
-            "error": str(e)
-        }
+def make_zip(dataset):
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        for i, r in enumerate(dataset):
+            if r["valid"]:
+                zf.writestr(f"{i:03d}_{r['formula']}.cif", r["cif"])
+    return buf.getvalue()
 
-
-# --- Backend Loading ---
 @st.cache_resource
 def load_backend():
     device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-    ckpt_path = "ckpt.pt"
+    tok  = CIFTokenizer()
+    ckpt = torch.load("ckpt.pt", map_location=device)
+    m    = GPT(GPTConfig())
+    m.load_state_dict({k.replace("_orig_mod.", ""): v for k, v in ckpt["model"].items()}, strict=False)
+    m.to(device).eval()
+    return m, tok, device
 
-    if not os.path.exists(ckpt_path):
-        return None, None, device, f"Checkpoint not found at: {ckpt_path}"
+# -- UI ------------------------------------------------------
+st.set_page_config(page_title="Intermetallic Factory", layout="wide")
+st.title("Intermetallic Dataset Factory")
 
-    try:
-        tokenizer = CIFTokenizer()
-        config = GPTConfig()
-        model = GPT(config)
+if "dataset" not in st.session_state:
+    st.session_state.dataset = []
 
-        checkpoint = torch.load(ckpt_path, map_location=device)
-        state_dict = checkpoint['model']
+model, tokenizer, device = load_backend()
 
-        for k in list(state_dict.keys()):
-            if k.startswith('_orig_mod.'):
-                state_dict[k[len('_orig_mod.'):]] = state_dict.pop(k)
+with st.sidebar:
+    st.header("Configuration")
+    dataset_size = st.number_input("Dataset Size", min_value=1, max_value=5000, value=50)
+    run          = st.button("Generate")
 
-        model.load_state_dict(state_dict, strict=False)
-        model.to(device).eval()
-        return model, tokenizer, device, "Success"
-    except Exception as e:
-        return None, None, device, str(e)
+if run:
+    st.session_state.dataset = []
+    found, attempts = 0, 0
+    bar    = st.progress(0)
+    status = st.empty()
+    log    = st.expander("Generation Log", expanded=True)
 
+    selector     = PUCTSelector(cpuct=1.4)
+    tree_builder = ContextSensitiveTreeBuilder(tokenizer=tokenizer)
+    evaluator    = MCTSEvaluator(scorer=HeuristicPhysicalScorer(), tokenizer=tokenizer)
 
-# --- UI Setup ---
-st.set_page_config(page_title="Crystal-Gen Pro: Feasibility Mode", layout="wide")
-st.title("Battery Crystal Discovery: Real-Life Feasibility")
-st.markdown("This AI-powered laboratory proposes and evaluates **new chemical arrangements** for battery energy storage.")
-
-with st.spinner("Initializing AI & Physics Engines..."):
-    model, tokenizer, device, status_msg = load_backend()
-
-if model is None:
-    st.error(f"Initialization Failed: {status_msg}")
-    st.stop()
-
-# Sidebar
-st.sidebar.header("System Status")
-st.sidebar.success(f"Hardware: {device.upper()}")
-
-st.sidebar.divider()
-st.sidebar.header("Search Settings")
-num_sims = st.sidebar.slider("MCTS Simulations", 10, 1000, 10)
-width = st.sidebar.slider("Branching Width (Top-K)", 5, 100, 30)
-temp = st.sidebar.slider("Creativity (Temperature)", 0.1, 1.5, 0.8)
-
-st.sidebar.subheader("Target Material Profile")
-target_rho = st.sidebar.slider("Target Density (g/cm³)", 1.0, 10.0, 3.5)
-c_puct = st.sidebar.number_input("Exploration Constant (C-PUCT)", value=1.4)
-
-# Main Interface
-st.info("Discovery Engine: Currently in 'Open Discovery' mode starting from 'data_'.")
-
-if st.button("Start Discovery & Analysis", type="primary"):
-    start_prompt = "data_"
-
-    try:
-        external_scorer = HeuristicPhysicalScorer(target_density=target_rho)
-        evaluator = MCTSEvaluator(scorer=external_scorer, tokenizer=tokenizer)
-        selector = PUCTSelector(cpuct=c_puct)
-        tree_builder = ContextSensitiveTreeBuilder(tokenizer=tokenizer)
+    while attempts < dataset_size:
+        attempts += 1
+        status.text(f"Attempt {attempts}/{dataset_size} — Found {found} valid crystals...")
 
         sampler = MCTSSampler(
-            model=model, config=model.config, width=width, max_depth=512,
+            model=model, config=model.config, width=30, max_depth=512,
             eval_function=evaluator, node_selector=selector,
-            tokenizer=tokenizer, temperature=temp, device=device,
+            tokenizer=tokenizer, temperature=0.8, device=device,
             tree_builder=tree_builder
         )
+        sampler.search("data_", num_simulations=10)
+        best = sampler.get_best_sequence()
 
-        with st.status("AI exploring chemical landscape...", expanded=True) as status:
-            sampler.search(start=start_prompt, num_simulations=num_sims)
-            status.update(label="Discovery Phase Complete!", state="complete", expanded=False)
+        if not best:
+            log.write(f"Attempt {attempts:03d} | Failed generation")
+            continue
 
-        best_data = sampler.get_best_sequence()
-        if best_data:
-            best_seq, best_score = best_data
+        tokens  = best[0] if isinstance(best, tuple) else best
+        cif_raw = tokenizer.decode(tokens)
 
-            cif_output = tokenizer.decode(best_seq)
-            if isinstance(cif_output, (bytes, bytearray)):
-                cif_output = cif_output.decode('utf-8')
-            elif not isinstance(cif_output, str):
-                cif_output = str(cif_output)
+        if len(cif_raw) < 200:
+            log.write(f"Attempt {attempts:03d} | Invalid CIF")
+            continue
 
-            if len(cif_output) < 200:
-                st.error("Generated structure is incomplete. Please increase simulations.")
-            else:
-                with st.spinner("Running Thermodynamic Stability Analysis..."):
-                    results = analyze_and_relax(cif_output, device)
+        res = analyze_structure(cif_raw, device)
 
-                if results["success"]:
-                    st.success(f"Candidate Identified: **{results['formula']}**")
+        if res is None:
+            log.write(f"Attempt {attempts:03d} | Relaxation failed")
+            continue
 
-                    m1, m2 = st.columns(2)
+        st.session_state.dataset.append(res)
+        if res["valid"]:
+            found += 1
 
-                    m1.metric(
-                        label="Formation Energy",
-                        value=f"{results['energy_per_atom']:.3f} eV/atom",
-                        delta=f"{results['final_energy'] - results['raw_energy']:.3f} eV (Relaxed)",
-                        delta_color="inverse"
-                    )
+        log.write(
+            f"Attempt {attempts:03d} | {res['formula']:<12} | "
+            f"{res['type'] or 'Non-metallic':<30} | "
+            f"E: {res['energy_per_atom']:.3f} eV/at | "
+            f"F: {res['force']:.3f} eV/A | "
+            f"{'VALID' if res['valid'] else 'REJECT'}"
+        )
 
-                    m2.metric(
-                        label="Structural Tension",
-                        value=f"{results['max_force']:.3f} eV/Å",
-                        delta=f"{results['max_force_initial'] - results['max_force']:.3f} reduction"
-                    )
+        bar.progress(attempts / dataset_size)
 
-                    st.divider()
+    st.success(f"Done. {found} valid crystals found in {attempts} attempts.")
 
-                    st.subheader("Synthesis Probability")
-                    energy = results['energy_per_atom']
-                    if energy < -4.0:
-                        st.success("HIGH FEASIBILITY")
-                    elif -4.0 <= energy < -1.0:
-                        st.warning("METASTABLE")
-                    else:
-                        st.error("UNSTABLE")
+# -- RESULTS -------------------------------------------------
+if st.session_state.dataset:
+    valid = [r for r in st.session_state.dataset if r["valid"]]
+    total = len(st.session_state.dataset)
 
-                    st.divider()
+    st.header("Metrics")
+    c1, c2, c3, c4, c5 = st.columns(5)
+    c1.metric("Valid Found",         f"{found if run else len(valid)}/{dataset_size}")
+    c2.metric("Intermetallic Yield", f"{sum(r['is_intermetallic'] for r in st.session_state.dataset)/total*100:.1f}%")
+    c3.metric("Valid Rate",          f"{len(valid)/total*100:.1f}%")
+    c4.metric("Avg Energy",          f"{np.mean([r['energy_per_atom'] for r in valid]):.3f} eV/atom" if valid else "N/A")
+    c5.metric("Avg Max Force",       f"{np.mean([r['force'] for r in valid]):.3f} eV/A" if valid else "N/A")
 
-                    # ---  NEW 3D VISUALIZATION ---
-                    st.subheader("3D Crystal Structure Visualization")
-                    #html_view = visualize_structure(results['cif'])
-                    #st.components.v1.html(html_view, height=550)
-                    visualize_structure(results['cif'])
+    if valid:
+        st.subheader("Alloy Type Diversity")
+        diversity = Counter(r["type"] for r in valid)
+        cols = st.columns(len(diversity))
+        for col, (atype, count) in zip(cols, diversity.items()):
+            col.metric(atype, count)
 
-                    st.divider()
+    st.download_button("Download ZIP", make_zip(st.session_state.dataset),
+                       "intermetallics.zip", "application/zip")
 
-                    st.subheader("Generated CIF Structure")
-                    st.code(results['cif'], language="text")
-
-                    st.download_button(
-                        label="Download Optimized CIF",
-                        data=results['cif'],
-                        file_name=f"{results['formula']}_stable.cif",
-                        mime="text/plain"
-                    )
-
-                else:
-                    st.error(f"CHGNet Stability Error: {results['error']}")
-        else:
-            st.error("The search tree failed to converge on a valid crystal.")
-
-    except Exception:
-        st.error("The Discovery Engine encountered a fatal error.")
-        st.code(traceback.format_exc())
+    st.subheader("Preview (Top 5 Valid)")
+    for r in valid[:5]:
+        with st.expander(f"{r['formula']} — {r['type']} | E: {r['energy_per_atom']:.3f} eV/at"):
+            st.code(r["cif"], language="text")
