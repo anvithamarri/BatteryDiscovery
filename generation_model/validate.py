@@ -120,7 +120,7 @@ def run_discovery(total_runs=100, num_sims=20):
         tokens = best[0] if isinstance(best, tuple) else best
         cif = tokenizer.decode(tokens)
 
-                struct, analysis = analyze_structure(cif, DEVICE)
+        struct, analysis = analyze_structure(cif, DEVICE)
 
         if struct is None or analysis is None:
             print(f"Run {i:03d} | Relaxation failed")
