@@ -120,7 +120,7 @@ def run_discovery(total_runs=100, num_sims=20):
         tokens = best[0] if isinstance(best, tuple) else best
         cif = tokenizer.decode(tokens)
 
-        struct, analysis = analyze_structure(cif, DEVICE)
+                struct, analysis = analyze_structure(cif, DEVICE)
 
         if struct is None or analysis is None:
             print(f"Run {i:03d} | Relaxation failed")
@@ -134,13 +134,15 @@ def run_discovery(total_runs=100, num_sims=20):
 
         if is_valid:
             try:
-                write(f"{OUTPUT_DIR}/run_{i}.cif", struct)
+                path = f"{OUTPUT_DIR}/run_{i}.cif"
+                write(path, struct)
                 valid_count += 1
-                print(f"Run {i:03d} | VALID → saved {OUTPUT_DIR}/run_{i}.cif")
+                print(f"Run {i:03d} | VALID → saved {path}")
             except Exception as e:
                 print(f"Run {i:03d} | VALID but failed to save: {e}")
         else:
             print(f"Run {i:03d} | REJECT → not saved")
+
 
     print(f"\n✅ Finished {total_runs} runs. {valid_count} valid CIFs saved in {OUTPUT_DIR}")
 
