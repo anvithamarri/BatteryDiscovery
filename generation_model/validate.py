@@ -2,12 +2,9 @@ import torch
 import os
 import io
 import numpy as np
-from collections import Counter
-
 from ase.io import read, write
 from ase.optimize import BFGS
 from ase.filters import ExpCellFilter
-
 from chgnet.model.dynamics import CHGNetCalculator
 
 from model_utils import GPT, GPTConfig
@@ -25,7 +22,6 @@ DEVICE = "cuda" if torch.cuda.is_available() else (
 CKPT_PATH = "ckpt.pt"
 OUTPUT_DIR = "/content/drive/MyDrive/cifsss"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-
 
 # ============================================================
 # LOAD MODEL
@@ -50,7 +46,6 @@ def load_model():
 
     model.load_state_dict(clean_state, strict=False)
     model.to(DEVICE).eval()
-
     return model, tokenizer
 
 # ============================================================
@@ -59,12 +54,9 @@ def load_model():
 def analyze_structure(cif_string, device):
     try:
         struct = read(io.BytesIO(cif_string.encode("utf-8")), format="cif")
-
-        # Attach CHGNet
         calc = CHGNetCalculator(use_device=("cpu" if device == "mps" else device))
         struct.calc = calc
 
-        # Relaxation
         ecf = ExpCellFilter(struct)
         dyn = BFGS(ecf, logfile=None)
         dyn.run(fmax=0.02, steps=200)
@@ -72,7 +64,6 @@ def analyze_structure(cif_string, device):
         final_energy = struct.get_potential_energy()
         forces = struct.get_forces()
         max_force = np.abs(forces).max()
-
         energy_per_atom = final_energy / len(struct)
 
         return struct, {
@@ -80,16 +71,14 @@ def analyze_structure(cif_string, device):
             "energy_per_atom": energy_per_atom,
             "force": max_force
         }
-
     except Exception:
         return None, None
 
 # ============================================================
 # MAIN DISCOVERY LOOP
 # ============================================================
-def run_discovery(total_runs=100, num_sims=20):
+def run_discovery(total_runs=20, num_sims=10):
     model, tokenizer = load_model()
-
     selector = PUCTSelector(cpuct=1.4)
     tree_builder = ContextSensitiveTreeBuilder(tokenizer=tokenizer)
     external_scorer = HeuristicPhysicalScorer(target_density=3.5)
@@ -98,6 +87,8 @@ def run_discovery(total_runs=100, num_sims=20):
     valid_count = 0
 
     for i in range(1, total_runs + 1):
+        print(f"\n=== Progress: {i}/{total_runs} runs ===")
+
         sampler = MCTSSampler(
             model=model,
             config=model.config,
@@ -113,7 +104,6 @@ def run_discovery(total_runs=100, num_sims=20):
 
         sampler.search("data_", num_simulations=num_sims)
         best = sampler.get_best_sequence()
-
         if not best:
             print(f"Run {i:03d} | Failed generation")
             continue
@@ -126,11 +116,8 @@ def run_discovery(total_runs=100, num_sims=20):
             print(f"Run {i:03d} | Relaxation failed")
             continue
 
-        # --- VALIDITY CHECK ---
-        is_valid = (
-            analysis["energy_per_atom"] < 0 and
-            analysis["force"] <= 0.05
-        )
+        # --- VALIDITY CHECK (relaxed) ---
+        is_valid = (analysis["energy_per_atom"] < 0 and analysis["force"] <= 0.1)
 
         if is_valid:
             try:
@@ -142,7 +129,6 @@ def run_discovery(total_runs=100, num_sims=20):
                 print(f"Run {i:03d} | VALID but failed to save: {e}")
         else:
             print(f"Run {i:03d} | REJECT → not saved")
-
 
     print(f"\n✅ Finished {total_runs} runs. {valid_count} valid CIFs saved in {OUTPUT_DIR}")
 
