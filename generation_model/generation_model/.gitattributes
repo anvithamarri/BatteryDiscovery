@@ -1,2 +1,0 @@
-generation_model/ckpt.pt filter=lfs diff=lfs merge=lfs -text
-preprocessing/train.bin filter=lfs diff=lfs merge=lfs -text
