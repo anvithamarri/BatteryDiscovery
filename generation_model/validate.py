@@ -23,7 +23,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else (
 )
 
 CKPT_PATH = "ckpt.pt"
-OUTPUT_DIR = "/content/generated_cifs"
+OUTPUT_DIR = "https://drive.google.com/drive/folders/1ywiXTB9retGp0Qr384R59hX8J1gQO3lH?usp=drive_link"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # ============================================================
