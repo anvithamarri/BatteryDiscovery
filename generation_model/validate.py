@@ -94,7 +94,7 @@ def run_discovery(total_runs=100, num_sims=20):
     external_scorer = HeuristicPhysicalScorer(target_density=3.5)
     evaluator = MCTSEvaluator(scorer=external_scorer, tokenizer=tokenizer)
 
-    results = []
+    valid_count = 0
 
     for i in range(1, total_runs + 1):
         sampler = MCTSSampler(
@@ -122,25 +122,30 @@ def run_discovery(total_runs=100, num_sims=20):
 
         struct, analysis = analyze_structure(cif, DEVICE)
 
-        if struct is None:
+        if struct is None or analysis is None:
             print(f"Run {i:03d} | Relaxation failed")
             continue
 
-        # --- Save CIF file ---
-        try:
-            write(f"{OUTPUT_DIR}/run_{i}.cif", struct)
-            print(f"Run {i:03d} | Saved CIF")
-        except Exception as e:
-            print(f"Run {i:03d} | Failed to save CIF: {e}")
+        # --- VALIDITY CHECK ---
+        is_valid = (
+            analysis["energy_per_atom"] < 0 and
+            analysis["force"] <= 0.05
+        )
 
-        results.append(analysis)
+        if is_valid:
+            try:
+                write(f"{OUTPUT_DIR}/run_{i}.cif", struct)
+                valid_count += 1
+                print(f"Run {i:03d} | VALID → saved {OUTPUT_DIR}/run_{i}.cif")
+            except Exception as e:
+                print(f"Run {i:03d} | VALID but failed to save: {e}")
+        else:
+            print(f"Run {i:03d} | REJECT → not saved")
 
-    print(f"\n✅ Finished {total_runs} runs. CIFs saved in {OUTPUT_DIR}")
+    print(f"\n✅ Finished {total_runs} runs. {valid_count} valid CIFs saved in {OUTPUT_DIR}")
 
 # ============================================================
 # RUN
 # ============================================================
 if __name__ == "__main__":
-    run_discovery(total_runs=20, num_sims=10)
-
     run_discovery(total_runs=20, num_sims=10)
