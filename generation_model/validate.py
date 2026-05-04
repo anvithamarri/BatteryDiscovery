@@ -20,7 +20,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else (
 )
 
 CKPT_PATH = "ckpt.pt"
-OUTPUT_DIR = "/content/drive/MyDrive/cifsss"
+OUTPUT_DIR = '/content/drive/MyDrive/project_output/"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # ============================================================
