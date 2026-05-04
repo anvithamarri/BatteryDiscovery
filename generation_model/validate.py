@@ -121,7 +121,7 @@ def run_discovery(total_runs=20, num_sims=10):
 
         if is_valid:
             try:
-                path = f"{OUTPUT_DIR}/run_{i}.cif"
+                path = f"{OUTPUT_DIR}/runn_{i}.cif"
                 write(path, struct)
                 valid_count += 1
                 print(f"Run {i:03d} | VALID → saved {path}")
