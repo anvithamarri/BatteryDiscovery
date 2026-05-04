@@ -136,4 +136,4 @@ def run_discovery(total_runs=20, num_sims=10):
 # RUN
 # ============================================================
 if __name__ == "__main__":
-    run_discovery(total_runs=30, num_sims=10)
+    run_discovery(total_runs=150, num_sims=10)
